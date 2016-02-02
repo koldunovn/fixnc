@@ -8,6 +8,18 @@ from collections import OrderedDict
 
 
 class ncfile(object):
+    '''
+    Th class is initiated with original netCDF file object
+    created by Dataset from netCDF4 package. The properties of the file
+    are copied to the attributes of the class and cna be then saved together
+    with data of the original file. The purpose is to be able to fix
+    description of the netCDF file, like dimention names, attributes and so on,
+    but to save the rest of the structure of the original file as much as
+    possible.
+    Initial version of the class is base on the code from here
+    https://github.com/Unidata/netcdf4-python/blob/master/netCDF4/utils.py
+
+    '''
 
     def __init__(self, ifile):
 
@@ -66,16 +78,13 @@ class ncfile(object):
         self.variab = variab
 
     def add_dim(self, name, size, isunlimited=False):
-        print(self.dims)
+        '''
+        Add dimention to the list of dimentions already copied from the file.
+        '''
         self.dims[name] = OrderedDict()
         self.dims[name]['name'] = name
         self.dims[name]['size'] = size
         self.dims[name]['isunlimited'] = isunlimited
-        #dim = OrderedDict()
-        #dim[name] = OrderedDict()
-        #dim[name]['name'] = name
-        #dim[name]['size'] = size
-        #dim[name]['isunlimited'] = isunlimited
         print(self.dims)
 
     def save(self, fname):
