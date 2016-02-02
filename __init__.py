@@ -43,7 +43,7 @@ class ncfile(object):
         # Read variable names
         varnames = ifile.variables.keys()
 
-        # add dimention names to set of variables
+        # I am not sure what this fix is for...
         for dimname in ifile.dimensions.keys():
             if dimname in ifile.variables.keys() and dimname not in varnames:
                     varnames.append(dimname)
@@ -85,7 +85,24 @@ class ncfile(object):
         self.dims[name]['name'] = name
         self.dims[name]['size'] = size
         self.dims[name]['isunlimited'] = isunlimited
-        print(self.dims)
+
+    def rename_dim(self, oldname, newname, renameall = True):
+        newdim = OrderedDict((newname if k == oldname else k, v) for k, v in
+                             self.dims.viewitems())
+        newdim[newname]['name'] = newname
+        self.dims = newdim
+        if renameall:
+            for var in self.variab:
+                vardims = self.variab[var]['dimentions']
+                print vardims
+                if oldname in vardims:
+                    print 'find old name'
+                    tempdim = list(vardims)
+                    for i in range(len(tempdim)):
+                        if tempdim[i] == oldname:
+                            tempdim[i] = newname
+                            print tempdim
+                    self.variab[var]['dimentions'] = tuple(tempdim)
 
     def save(self, fname):
 
@@ -98,7 +115,7 @@ class ncfile(object):
 
         # Create dimentions
         for dim in self.dims.itervalues():
-            print(dim)
+            #print(dim)
             if dim["isunlimited"]:
                 ncfile4.createDimension(dim['name'],None)
                 if self.istop == -1: self.istop=dim['size']
@@ -107,7 +124,7 @@ class ncfile(object):
 
         # Loop over variables
         for vari in self.variab:
-            print vari
+            #print vari
             perem  = self.variab[vari]
             var = ncfile4.createVariable(vari,
                                          perem['datatype'],
