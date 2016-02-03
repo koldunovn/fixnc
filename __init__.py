@@ -144,9 +144,9 @@ class ncfile(object):
                                          fill_value=perem['FillValue'],\
                                          complevel=1)
 
-            attdict = perem['data'].__dict__
-            if '_FillValue' in attdict: del attdict['_FillValue']
-            var.setncatts(attdict)
+            #attdict = perem['data'].__dict__
+            #if '_FillValue' in attdict: del attdict['_FillValue']
+            var.setncatts(perem['attributes'])
 
             if perem['hasunlimdim']: # has an unlim dim, loop over unlim dim index.
                 # range to copy
