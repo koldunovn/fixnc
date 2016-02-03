@@ -133,6 +133,19 @@ class ncfile(object):
         else:
             raise ValueError('there is no variable with name {}'.format(oldname))
 
+    def add_attr(self, var, attr, value):
+        '''
+        Adds attribute to specified variable
+        '''
+        self.variab[var]['attributes'][attr] = value
+
+    def dell_attr(self, var, attr):
+        if self.variab[var]['attributes'].has_key(attr):
+            del self.variab[var]['attributes'][attr]
+        else:
+            raise ValueError('there is no attribute with name {} in variable {} '.format(attr, var))
+
+
 
 
 
