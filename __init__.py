@@ -112,6 +112,29 @@ class ncfile(object):
                              self.variab[var]['attributes'].viewitems())
         self.variab[var]['attributes'] = newattr
 
+    def change_attr(self, var, attrname, newvalue):
+        '''
+        Change the value of the attribute in specified variable
+        '''
+        if self.variab[var]['attributes'].has_key(attrname):
+            self.variab[var]['attributes'][attrname] = newvalue
+        else:
+            raise ValueError('there is no attribute with name {} in variable {}'.format(attrname, var))
+
+
+    def rename_var(self, oldname, newname):
+        '''
+        Rename variable.
+        '''
+        if self.variab.has_key(oldname):
+            newvar = OrderedDict((newname if k == oldname else k, v) for k, v in
+                             self.variab.viewitems())
+            self.variab = newvar
+        else:
+            raise ValueError('there is no variable with name {}'.format(oldname))
+
+
+
 
 
 
