@@ -3,6 +3,7 @@ from netCDF4 import Dataset
 
 import sh
 from collections import OrderedDict
+import pickle
 
 def create_variable(data, dimentions, hasunlimdim, datatype, FillValue,
                     attributes):
@@ -39,6 +40,20 @@ def create_variable(data, dimentions, hasunlimdim, datatype, FillValue,
                         ('FillValue',FillValue),
                         ('attributes',attributes)])
     return vvar
+
+def dump_variable(var, filename):
+    outfile = open(filename, 'wb')
+    pickle.dump(var, outfile)
+    outfile.close()
+
+def load_variable(filename):
+    ifile = open(filename, 'r')
+    var = pickle.load(ifile)
+    ifile.close()
+    return var
+
+
+
 
 
 class ncfile(object):
