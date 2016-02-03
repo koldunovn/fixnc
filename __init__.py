@@ -104,6 +104,18 @@ class ncfile(object):
                             print tempdim
                     self.variab[var]['dimentions'] = tuple(tempdim)
 
+    def rename_attr(self, var, oldname, newname):
+        '''
+        Renames the attribute, but the value of the attribute stays the same.
+        '''
+        newattr = OrderedDict((newname if k == oldname else k, v) for k, v in
+                             self.variab[var]['attributes'].viewitems())
+        self.variab[var]['attributes'] = newattr
+
+
+
+
+
     def save(self, fname):
 
         try:
