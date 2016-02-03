@@ -4,7 +4,41 @@ from netCDF4 import Dataset
 import sh
 from collections import OrderedDict
 
+def create_variable(data, dimentions, hasunlimdim, datatype, FillValue,
+                    attributes):
+    '''
+    Create  dictionary that contain information nessesary for creation of the
+    netCDF variable.
+    INPUT:
+        data:
+                numpy array, or object that can return numpy array with []
+                syntaxis
 
+        dimentions:
+                tuple with dimention names, like ('time', 'lat', 'lon').
+                Dimentions should exist in the source file, or should be added
+                in the ncfile object.
+
+        hasunlimdim:
+                True if variable have unlimited dimention, otherwise False
+
+        datatype:
+                numpy datatype as a string, like "float32"
+
+        FillValue:
+                If it exist, otherwise None
+
+        attributes:
+                Orderd dict with attributes and their values.
+
+    '''
+    vvar = OrderedDict([('data',data),
+                        ('dimentions',dimentions),
+                        ('hasunlimdim',hasunlimdim),
+                        ('datatype',np.dtype(datatype)),
+                        ('FillValue',FillValue),
+                        ('attributes',attributes)])
+    return vvar
 
 
 class ncfile(object):
@@ -145,6 +179,8 @@ class ncfile(object):
         else:
             raise ValueError('there is no attribute with name {} in variable {} '.format(attr, var))
 
+    def add_var(self, varname, var):
+        self.variab[varname] = var
 
 
 
