@@ -213,6 +213,10 @@ class ncfile(object):
         ordered = reorder(self.dims, neworder)
         self.dims = ordered
 
+    def reorder_vars(self, neworder):
+        ordered = reorder(self.variab, neworder)
+        self.variab = ordered
+
 
 
 
@@ -265,9 +269,14 @@ class ncfile(object):
                     idata = perem['data'][:]
                     var[0:len(unlimdim)] = idata
 
+
             else: # no unlim dim or 1-d variable, just copy all data at once.
-                idata = perem['data'][:]
-                var[:] = idata
+                if perem['data'].shape != ():
+                    idata = perem['data'][:]
+                    var[:] = idata
+                else:
+                    var[:] = perem['data']
+
             ncfile4.sync() # flush data to disk
 
         gattrs = self.ifile.ncattrs()
