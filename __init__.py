@@ -65,8 +65,8 @@ def reorder(odict, neworder):
 
     ordered = OrderedDict()
     for key in neworder:
-        ordered[key] = odict[k]
-
+        ordered[key] = odict[key]
+    return ordered
 
 class ncfile(object):
     '''
@@ -208,6 +208,10 @@ class ncfile(object):
 
     def add_var(self, varname, var):
         self.variab[varname] = var
+
+    def reorder_dims(self, neworder):
+        ordered = reorder(self.dims, neworder)
+        self.dims = ordered
 
 
 
