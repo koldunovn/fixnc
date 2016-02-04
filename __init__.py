@@ -52,8 +52,20 @@ def load_variable(filename):
     ifile.close()
     return var
 
+def reorder(odict, neworder):
+    '''
+    Reorder Ordered Dictionary according to the list of keys provided in
+    neworder.
+    '''
+    if len(odict) != len(neworder):
+        raise ValueError('Number of elemnts in the dictionary and in the new order have to be equal')
+    for key in neworder:
+        if key not in odict:
+            raise ValueError('Key {} from neworder is not in the dictionary'.format(key))
 
-
+    ordered = OrderedDict()
+    for key in neworder:
+        ordered[key] = odict[k]
 
 
 class ncfile(object):
