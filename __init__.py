@@ -77,7 +77,7 @@ class ncfile(object):
     description of the netCDF file, like dimention names, attributes and so on,
     but to save the rest of the structure of the original file as much as
     possible.
-    Initial version of the class is base on the code from here
+    Initial version of the class is based on the code from here
     https://github.com/Unidata/netcdf4-python/blob/master/netCDF4/utils.py
 
     '''
@@ -182,6 +182,14 @@ class ncfile(object):
                              self.variab[var]['attributes'].viewitems())
         self.variab[var]['attributes'] = newattr
 
+    def rename_gattr(self, oldname, newname):
+        '''
+        Renames the global attribute, but the value of the attribute stays the same.
+        '''
+        newattr = OrderedDict((newname if k == oldname else k, v) for k, v in
+                             self.gattrs.viewitems())
+        self.gattrs = newattr
+
     def change_attr(self, var, attrname, newvalue):
         '''
         Change the value of the attribute in specified variable
@@ -190,6 +198,14 @@ class ncfile(object):
             self.variab[var]['attributes'][attrname] = newvalue
         else:
             raise ValueError('there is no attribute with name {} in variable {}'.format(attrname, var))
+    def change_gattr(self, attrname, newvalue):
+        '''
+        Change the value of the global attribute in specified variable
+        '''
+        if self.gattrs.has_key(attrname):
+            self.gattrs[attrname] = newvalue
+        else:
+            raise ValueError('there is no global attribute with name {}'.format(attrname))
 
 
     def rename_var(self, oldname, newname):
@@ -208,6 +224,12 @@ class ncfile(object):
         Adds attribute to specified variable
         '''
         self.variab[var]['attributes'][attr] = value
+
+    def add_gattr(self, attr, value):
+        '''
+        Adds global attribute to specified variable
+        '''
+        self.gattrs[attr] = value
 
     def dell_attr(self, var, attr):
         if self.variab[var]['attributes'].has_key(attr):
@@ -313,7 +335,11 @@ class ncfile(object):
                 svars.append("\t   FillValue:{}\n".format(attr[0], str(self.variab[key]['FillValue'])))
         svars = ''.join(svars)
         sinfo.append(svars)
-        
+        sgattr = []
+        for attr in self.gattrs:
+            sgattr.append('\t {}:{}\n'.format(attr, self.gattrs[attr]))
+        sgattr = ''.join(sgattr)
+        sinfo.append(sgattr)
         return '\n'.join(sinfo)
 
 
