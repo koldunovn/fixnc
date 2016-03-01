@@ -138,6 +138,15 @@ class ncfile(object):
 
         self.variab = variab
 
+        #Set global attributes
+        gattrs_names = self.ifile.ncattrs()
+        
+        gattrs = OrderedDict()
+        for gatt in gattrs_names:
+            gattrs[gatt] = getattr(self.ifile,gatt)
+            #setattr(ncfile4, gatt, getattr(self.ifile,gatt))
+        self.gattrs = gattrs
+        
     def add_dim(self, name, size, isunlimited=False):
         '''
         Add dimention to the list of dimentions already copied from the file.
@@ -279,11 +288,32 @@ class ncfile(object):
 
             ncfile4.sync() # flush data to disk
 
-        gattrs = self.ifile.ncattrs()
-        for gatt in gattrs:
-            setattr(ncfile4, gatt, getattr(self.ifile,gatt))
+        #gattrs = self.ifile.ncattrs()
+        for gatt in self.gattrs:
+            setattr(ncfile4, gatt, self.gattrs[gatt])
 
 
         ncfile4.close()
+
+    def __repr__(self):
+        sinfo = []
+        sinfo.append('File format: '+ self.ifile.file_format)
+        sdims = [name+'('+str(self.dims[name]['size'])+')' for name in self.dims ]
+        sinfo.append('Dimentions: '+', '.join(sdims))
+
+        svars = ['variables:\n']
+        for key in self.variab:
+            #print "\t {} {}".format(self.variab[key]['datatype'], key)
+            svars.append("\t {} {}({})\n".format(self.variab[key]['datatype'],\
+                                               key, \
+                                               ', '.join(self.variab[key]['dimentions'])))
+            for attr in self.variab[key]['attributes'].items():
+                svars.append("\t   {}:{}\n".format(attr[0], attr[1]))
+            if self.variab[key]['FillValue']:
+                svars.append("\t   FillValue:{}\n".format(attr[0], str(self.variab[key]['FillValue'])))
+        svars = ''.join(svars)
+        sinfo.append(svars)
+        
+        return '\n'.join(sinfo)
 
 
