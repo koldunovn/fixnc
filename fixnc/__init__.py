@@ -164,14 +164,14 @@ class ncfile(object):
         if renameall:
             for var in self.variab:
                 vardims = self.variab[var]['dimentions']
-                print vardims
+                #print vardims
                 if oldname in vardims:
-                    print 'find old name'
+                    #print 'find old name'
                     tempdim = list(vardims)
                     for i in range(len(tempdim)):
                         if tempdim[i] == oldname:
                             tempdim[i] = newname
-                            print tempdim
+                            #print tempdim
                     self.variab[var]['dimentions'] = tuple(tempdim)
 
     def rename_attr(self, var, oldname, newname):
