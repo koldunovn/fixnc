@@ -87,10 +87,6 @@ We can change the names of dimentions with 'rename_dim' method:
 nc.rename_dim('X','lon')
 nc.rename_dim('Y','lat')
 nc.rename_dim('T','time',)
-```
-
-
-```python
 nc
 ```
 
@@ -117,10 +113,6 @@ Now rename variables:
 ```python
 nc.rename_var('T','time')
 nc.rename_var('mytemp', 'temp')
-```
-
-
-```python
 nc
 ```
 
@@ -193,10 +185,6 @@ And add some glabal attribute as well:
 
 ```python
 nc.add_gattr('history','fixed with fixnc')
-```
-
-
-```python
 nc
 ```
 
