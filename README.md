@@ -1,8 +1,8 @@
 # fixnc
-fix netCDF header
+Easy edit of netCDF files.
 
 
-This package make changing the header of the netCDF file easy. You can add, delete and rename dimentions, variables and attributes.
+This package makes changing the meta information of the netCDF file easy. You can add, delete and rename dimentions, variables and attributes.
 
 ## Motivation:
 
@@ -10,9 +10,9 @@ Many people and programs still do not follow CF convention. Wrong attributes or 
 
 ## Requirements:
 
-netCDF4 https://github.com/Unidata/netcdf4-python
+- netCDF4 https://github.com/Unidata/netcdf4-python
 
-sh https://github.com/amoffat/sh
+- sh https://github.com/amoffat/sh
 
 ## Basic usage:
 
