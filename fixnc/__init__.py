@@ -5,8 +5,8 @@ import sh
 from collections import OrderedDict
 import pickle
 
-def create_variable(data, dimentions, hasunlimdim, datatype, FillValue,
-                    attributes):
+def create_variable(data, dimentions, hasunlimdim=False, datatype='float32', FillValue=None,
+                    attributes=OrderedDict()):
     '''
     Create  dictionary that contain information nessesary for creation of the
     netCDF variable.
@@ -21,7 +21,10 @@ def create_variable(data, dimentions, hasunlimdim, datatype, FillValue,
                 in the ncfile object.
 
         hasunlimdim:
-                True if variable have unlimited dimention, otherwise False
+                True if variable have unlimited dimention, otherwise False.
+                !!NOTE!! At present unlimited dimention in your new variable has
+                to be the same size as in the original data (e.g. number of time steps).
+                This should be changed.
 
         datatype:
                 numpy datatype as a string, like "float32"

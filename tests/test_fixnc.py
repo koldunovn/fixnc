@@ -3,6 +3,7 @@ import fixnc as fnc
 from netCDF4 import Dataset
 from collections import OrderedDict
 import os
+import numpy as np
 
 fl2 = Dataset('./tests/test.nc')
 nc = fnc.ncfile(fl2)
@@ -55,6 +56,12 @@ def test_add_gattr():
     nc.add_gattr('history','fixed with fixnc')
     assert nc.gattrs == OrderedDict([('history', 'fixed with fixnc')])
 
+def test_add_var():
+    data = np.zeros((5,10,10))
+    newvar = fnc.create_variable(data,('time','lon','lat'), True, data.dtype, -1, OrderedDict([('name','zeros')]))
+    nc.add_var('newvar', newvar)
+    assert nc.variab.keys() == ['time', 'temp', 'newvar']
+
 def test_save():
     try:
         os.remove('./tests/out.nc')
@@ -62,12 +69,12 @@ def test_save():
         pass
     nc.save('./tests/out.nc')
     fl2 = Dataset('./tests/out.nc', mode='r')
-    assert fl2.variables.keys() == [u'time', u'temp']
+    assert fl2.variables.keys() == [u'time', u'temp', u'newvar']
     assert fl2.dimensions.keys() == [u'lon', u'lat', u'time']
     assert fl2.dimensions['lon'].size == 10
     assert fl2.dimensions['time'].size == 5
 
-    
+
 
 
 
