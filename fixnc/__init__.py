@@ -232,24 +232,39 @@ class ncfile(object):
         self.gattrs[attr] = value
 
     def dell_attr(self, var, attr):
+        '''
+        Delete attribute from the variable
+        '''
         if self.variab[var]['attributes'].has_key(attr):
             del self.variab[var]['attributes'][attr]
         else:
             raise ValueError('there is no attribute with name {} in variable {} '.format(attr, var))
 
     def add_var(self, varname, var):
+        '''
+        Adds variable to the netCDF file (should be OrderedDict, prepared with 'create_variable' function).
+        '''
         self.variab[varname] = var
 
     def reorder_dims(self, neworder):
+        '''
+        Reorder dimentions in the OrderedDict.
+        '''
         ordered = reorder(self.dims, neworder)
         self.dims = ordered
 
     def reorder_vars(self, neworder):
+        '''
+        Reorder variables.
+        '''
         ordered = reorder(self.variab, neworder)
         self.variab = ordered
 
 
     def save(self, fname):
+        '''
+        Create netCDF file from the ncfile object 
+        '''
 
         try:
             sh.rm(fname)
@@ -313,6 +328,9 @@ class ncfile(object):
         ncfile4.close()
 
     def __repr__(self):
+        '''
+        Text representation of the ncfile object.
+        '''
         sinfo = []
         sinfo.append('File format: '+ self.ifile.file_format)
         sdims = [name+'('+str(self.dims[name]['size'])+')' for name in self.dims ]
