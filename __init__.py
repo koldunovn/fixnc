@@ -164,14 +164,14 @@ class ncfile(object):
         if renameall:
             for var in self.variab:
                 vardims = self.variab[var]['dimentions']
-                print vardims
+                #print vardims
                 if oldname in vardims:
-                    print 'find old name'
+                    #print 'find old name'
                     tempdim = list(vardims)
                     for i in range(len(tempdim)):
                         if tempdim[i] == oldname:
                             tempdim[i] = newname
-                            print tempdim
+                            #print tempdim
                     self.variab[var]['dimentions'] = tuple(tempdim)
 
     def rename_attr(self, var, oldname, newname):
@@ -247,11 +247,6 @@ class ncfile(object):
     def reorder_vars(self, neworder):
         ordered = reorder(self.variab, neworder)
         self.variab = ordered
-
-
-
-
-
 
 
     def save(self, fname):
@@ -330,9 +325,9 @@ class ncfile(object):
                                                key, \
                                                ', '.join(self.variab[key]['dimentions'])))
             for attr in self.variab[key]['attributes'].items():
-                svars.append("\t   {}:{}\n".format(attr[0], attr[1]))
+                svars.append("\t   {}: {}\n".format(attr[0], attr[1]))
             if self.variab[key]['FillValue']:
-                svars.append("\t   FillValue:{}\n".format(attr[0], str(self.variab[key]['FillValue'])))
+                svars.append("\t   FillValue: {}\n".format(attr[0], str(self.variab[key]['FillValue'])))
         svars = ''.join(svars)
         sinfo.append(svars)
         sgattr = []
