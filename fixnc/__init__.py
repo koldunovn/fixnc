@@ -157,22 +157,31 @@ class ncfile(object):
         self.dims[name]['isunlimited'] = isunlimited
 
     def rename_dim(self, oldname, newname, renameall = True):
+        '''
+        Rename dimention. If renameall is True, rename coresponding
+        dimntions in the variables as well.
+        '''
         newdim = OrderedDict((newname if k == oldname else k, v) for k, v in
                              self.dims.viewitems())
         newdim[newname]['name'] = newname
         self.dims = newdim
         if renameall:
             for var in self.variab:
-                vardims = self.variab[var]['dimentions']
-                #print vardims
-                if oldname in vardims:
+                self.rename_dim_invar(var, oldname, newname)
+
+    def rename_dim_invar(self, var, oldname, newname):
+        '''
+        Rename dimention in the variable.
+        '''
+        vardims = self.variab[var]['dimentions']
+        if oldname in vardims:
                     #print 'find old name'
-                    tempdim = list(vardims)
-                    for i in range(len(tempdim)):
-                        if tempdim[i] == oldname:
-                            tempdim[i] = newname
-                            #print tempdim
-                    self.variab[var]['dimentions'] = tuple(tempdim)
+            tempdim = list(vardims)
+            for i in range(len(tempdim)):
+                if tempdim[i] == oldname:
+                    tempdim[i] = newname
+            
+            self.variab[var]['dimentions'] = tuple(tempdim)
 
     def rename_attr(self, var, oldname, newname):
         '''

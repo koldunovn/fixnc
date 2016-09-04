@@ -26,5 +26,7 @@ def test_rename_dim2():
     assert nc.dims.keys() == ['lon', u'lat', u'T']
     assert nc.variab['mytemp']['dimentions'] == (u'T', 'lon', u'Y')
 
-
+def test_rename_dim_invar():
+    nc.rename_dim_invar('mytemp','Y','lat')
+    assert nc.variab['mytemp']['dimentions'] == (u'T', 'lon', u'lat')
 
