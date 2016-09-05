@@ -13,7 +13,7 @@ def create_variable(data, dimentions, hasunlimdim=False, datatype='float32', Fil
     INPUT:
         data:
                 numpy array, or object that can return numpy array with []
-                syntaxis
+                syntax
 
         dimentions:
                 tuple with dimention names, like ('time', 'lat', 'lon').
@@ -271,6 +271,15 @@ class ncfile(object):
         '''
         ordered = reorder(self.variab, neworder)
         self.variab = ordered
+
+    def change_data(self, var, data):
+        '''
+        Change data values in the variable. Should be exactly the same shape as original data.
+        Data should be numpy array, or object that can return numpy array with []
+        syntax
+        '''
+        self.variab[var]['data'] = data
+
 
 
     def save(self, fname):
