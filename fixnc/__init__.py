@@ -98,7 +98,11 @@ class ncfile(object):
         dims = OrderedDict()
         for dimname, dim in ifile.dimensions.items():
             dims[dimname] = OrderedDict()
-            dims[dimname]['name'] = dim.name
+            try:
+                dims[dimname]['name'] = dim.name
+            except:
+                dims[dimname]['name'] = dimname
+
             dims[dimname]['size'] = len(dim)
             dims[dimname]['isunlimited'] = dim.isunlimited()
 
