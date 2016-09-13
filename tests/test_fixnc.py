@@ -71,8 +71,8 @@ def test_save():
     fl2 = Dataset('./tests/out.nc', mode='r')
     assert fl2.variables.keys() == [u'time', u'temp', u'newvar']
     assert fl2.dimensions.keys() == [u'lon', u'lat', u'time']
-    assert fl2.dimensions['lon'].size == 10
-    assert fl2.dimensions['time'].size == 5
+    assert len(fl2.dimensions['lon']) == 10
+    assert len(fl2.dimensions['time']) == 5
 
 
 
