@@ -4,7 +4,7 @@ fixnc's documentation
 This package makes changing the meta information of the netCDF file easy. You can add, delete and rename dimentions, variables and attributes.
 
 Quick start:
-============
+------------
 This will show some basic usage. In the tests directory you will find a netCDF file, that have X, Y and T dimentions.
 We would like to change the names of this dimentions to lon lat and time::
 
@@ -26,12 +26,28 @@ To add an attribute to T variable you simply::
 
     nc.add_attr('T','standard_name', 'time')
 
+Requirements
+------------
+
+ * netCDF4 https://github.com/Unidata/netcdf4-python
+
+ * sh https://github.com/amoffat/sh
+
+Installation
+------------
+
+For now just clone the github repo, or download zip file. 
+
+Next steps
+==========
+
 
 
 
 .. toctree::
-   :maxdepth: 2
-
+   :maxdepth: 3
+   
+   tutorial
 
 Indices and tables
 ==================
