@@ -4,9 +4,17 @@ Easy edit of netCDF files.
 
 This package makes changing the meta information of the netCDF file easy. You can add, delete and rename dimentions, variables and attributes.
 
+## What it does
+
+- renames dimentions, variables and attributes in netCDF files.
+- changes values of variables and attributes.
+- adds dimentions, variables and attributes.
+- removes attributes.
+- reorders dimentions and variables.
+
 ## Motivation:
 
-Many people and programs still do not follow CF convention. Wrong attributes or variable names will break your work flow. It is difficult to rename or add attributes in existing files using netCDF4 python library. This is a wrapper around netCDF4 that allows quick change of your netCDF header.
+Many people and programs still do not follow CF convention. What is worst many progams think that they know better how your netCDF files should look like (I am looking at you, cdo). Wrong attributes or variable names will break your work flow. It is difficult to rename or add attributes in existing files using netCDF4 python library. This is a wrapper around netCDF4 that allows quick change of your netCDF header.
 
 ## Requirements:
 
