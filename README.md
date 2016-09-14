@@ -1,7 +1,7 @@
 # fixnc
 Easy edit of netCDF files.
 
-[![Documentation Status](https://readthedocs.org/projects/fixnc/badge/?version=latest)](http://fixnc.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/fixnc/badge/?version=latest)](http://fixnc.readthedocs.io/en/latest/?badge=latest) [![Build Status](https://travis-ci.org/koldunovn/fixnc.svg?branch=master)](https://travis-ci.org/koldunovn/fixnc)
 
 
 This package makes changing the meta information of the netCDF file easy. You can add, delete and rename dimentions, variables and attributes.
