@@ -73,7 +73,7 @@ def reorder(odict, neworder):
 
 class ncfile(object):
     '''
-    Th class is initiated with original netCDF file object
+    This class is initiated with original netCDF file object
     created by Dataset from netCDF4 package. The properties of the file
     are copied to the attributes of the class and cna be then saved together
     with data of the original file. The purpose is to be able to fix

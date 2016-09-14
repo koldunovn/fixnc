@@ -1,53 +1,78 @@
-fixnc's documentation
-=====================
+fix netCDF files
+================
 
-This package makes changing the meta information of the netCDF file easy. You can add, delete and rename dimentions, variables and attributes.
+**fixnc** helps to change meta information of the netCDF files. You can easilly add, delete and rename dimentions, variables and attributes.
 
 Quick start:
 ------------
-This will show some basic usage. In the tests directory you will find a netCDF file, that have X, Y and T dimentions.
+In the *tests* directory you will find a netCDF file *test.nc*, that have *X*, *Y* and *T* dimentions.::
+
+	netcdf test {
+	dimensions:
+		X = 10 ;
+		Y = 10 ;
+		T = UNLIMITED ; // (5 currently)
+	variables:
+		float T(T) ;
+			T:unuts = "hours since 2001-01-01 00:00:00" ;
+		float mytemp(T, X, Y) ;
+			mytemp:longname = "Temperature" ;
+			mytemp:shortname = "temp" ;
+	}
+
 We would like to change the names of this dimentions to lon lat and time::
 
     import fixnc as fnc
     from netCDF4 import Dataset
 
-    fl = Dataset('./tests/test.nc')
-    nc = fnc.ncfile(fl)
-
-    nc.rename_dim('X','lon')
+    fl = Dataset('./tests/test.nc') # create netCDF4 instance
+    nc = fnc.ncfile(fl)             # create ncfile instance, that is just a collection
+                                    # of ordered dictionaries.
+    # rename dimentions
+    nc.rename_dim('X','lon')    
     nc.rename_dim('Y','lat')
     nc.rename_dim('T','time',)
-
+    
+    # save output
     nc.save('out.nc')
 
-This should generate a new netCDF file, that have exactly the same content as the original one, but with dimention names changed. In this case dimention names in the variables will be also changed.
+This should generate a new netCDF file (*out.nc*), that have exactly the same content as the original one, but with dimention names changed.::
+
+	netcdf out {
+	dimensions:
+		lon = 10 ;
+		lat = 10 ;
+		time = UNLIMITED ; // (5 currently)
+	variables:
+		float T(time) ;
+			T:unuts = "hours since 2001-01-01 00:00:00" ;
+		float mytemp(time, lon, lat) ;
+			mytemp:longname = "Temperature" ;
+			mytemp:shortname = "temp" ;
+	}
+
+
+In this case dimention names in the variables will be also changed.
 
 To add an attribute to T variable you simply::
 
     nc.add_attr('T','standard_name', 'time')
 
-Requirements
-------------
-
- * netCDF4 https://github.com/Unidata/netcdf4-python
-
- * sh https://github.com/amoffat/sh
-
-Installation
-------------
-
-For now just clone the github repo, or download zip file. 
-
-Next steps
-==========
-
-
-
+Documentation
+-------------
 
 .. toctree::
    :maxdepth: 3
    
+   installation
    tutorial
+   api
+
+
+
+
+
+
 
 Indices and tables
 ==================
