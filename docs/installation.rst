@@ -14,8 +14,22 @@ Required dependencies
 Installation
 ------------
 
-Currently the easiest way is just to clone or download github `repo`_
+If you are lucky simple ::
 
-.. _repo: https://github.com/koldunovn/fixnc
+    pip install fixnc
+
+should install dependencies and fixnc itself. However there is a big chance, that netcdf4 will have some problems. 
+
+The better way is to first install netcdf4 with Miniconda_ and then pip install fixnc.
+
+.. _Miniconda: http://conda.pydata.org/miniconda.html
+
+
+
+And you always can just clone github `repository`_ .
+
+.. _repository: https://github.com/koldunovn/fixnc
+
+
 
 
