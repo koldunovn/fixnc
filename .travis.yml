@@ -22,6 +22,7 @@ install:
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION netcdf4 sh pytest
   - source activate test-environment
+  - python setup.py install
 
 script:
   - py.test
