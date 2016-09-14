@@ -7,34 +7,35 @@ import pickle
 
 def create_variable(data, dimentions, hasunlimdim=False, datatype='float32', FillValue=None,
                     attributes=OrderedDict()):
-    '''
-    Create  dictionary that contain information nessesary for creation of the
+    '''Creates dictionary that can be added as a variable to the netCDF file.
+
+    Create  dictionary that contains information nessesary for creation of the
     netCDF variable.
-    INPUT:
-        data:
-                numpy array, or object that can return numpy array with []
-                syntax
 
-        dimentions:
-                tuple with dimention names, like ('time', 'lat', 'lon').
-                Dimentions should exist in the source file, or should be added
-                in the ncfile object.
+    Parameters
+    ----------
+    data : array-like
+        Numpy array, array-like object that contains the actual data values.
+    dimentions : tuple
+        tuple with dimention names, like ('time', 'lat', 'lon').
+        Dimentions should exist in the source file, or should be added
+        in the ncfile object.
+    hasunlimdim : bool
+         True if variable have unlimited dimention, otherwise False.
+         !!NOTE!! At present unlimited dimention in your new variable has
+         to be the same size as in the original data (e.g. number of time steps).
+         This should be changed.
+    datatype: datatype
+        numpy datatype as a string, like "float32".
+    FillValue: number, optional
+        If your data should have one, otherwise None
+    attributes: OrderedDict
+        Orderd dictionary with attributes and their values.
 
-        hasunlimdim:
-                True if variable have unlimited dimention, otherwise False.
-                !!NOTE!! At present unlimited dimention in your new variable has
-                to be the same size as in the original data (e.g. number of time steps).
-                This should be changed.
-
-        datatype:
-                numpy datatype as a string, like "float32"
-
-        FillValue:
-                If it exist, otherwise None
-
-        attributes:
-                Orderd dict with attributes and their values.
-
+    Returns
+    -------
+    OrderedDict
+        Ordered dictionary that can be used to add data to netCDF file.
     '''
     vvar = OrderedDict([('data',data),
                         ('dimentions',dimentions),
@@ -45,20 +46,60 @@ def create_variable(data, dimentions, hasunlimdim=False, datatype='float32', Fil
     return vvar
 
 def dump_variable(var, filename):
+    '''Use `pickle` to dump OrderedDict to the file.
+
+    Parameters
+    ----------
+    var : OrderedDict
+        OrderedDict, supposedly produced by `create_variable` function.
+    filename : str
+        name of the file.
+
+    Returns
+    -------
+    bool
+        True is succes.
+    '''
     outfile = open(filename, 'wb')
     pickle.dump(var, outfile)
     outfile.close()
+    return True
 
 def load_variable(filename):
+    '''Use `pickle` load OrderedDict from the file to the variable.
+
+    Parameters
+    ----------
+    filename : str
+        name of the file.
+
+    Returns
+    -------
+    OrderedDict
+        
+    '''
     ifile = open(filename, 'r')
     var = pickle.load(ifile)
     ifile.close()
     return var
 
 def reorder(odict, neworder):
-    '''
+    '''Reorder values in the OrderedDict
+
     Reorder Ordered Dictionary according to the list of keys provided in
     neworder.
+
+    Parameters
+    ----------
+    odict : OrderedDict
+
+    neworder : list
+        list with keys from the odict, positioned in the new order.
+
+    Returns
+    -------
+    OrderedDict
+        Ordered dictionary with key-value pairs reordered according to the `neworder`.
     '''
     if len(odict) != len(neworder):
         raise ValueError('Number of elemnts in the dictionary and in the new order have to be equal')
@@ -72,16 +113,23 @@ def reorder(odict, neworder):
     return ordered
 
 class ncfile(object):
-    '''
+    '''Main class of the fixnc.
+
     This class is initiated with original netCDF file object
-    created by Dataset from netCDF4 package. The properties of the file
+    created by Dataset from the netCDF4 package. The properties of the file
     are copied to the attributes of the class and cna be then saved together
     with data of the original file. The purpose is to be able to fix
-    description of the netCDF file, like dimention names, attributes and so on,
+    metadata in the netCDF file, like dimention names, attributes and so on,
     but to save the rest of the structure of the original file as much as
     possible.
-    Initial version of the class is based on the code from here
+
+    Initial version of the class is based on the code from netCDF4 library
     https://github.com/Unidata/netcdf4-python/blob/master/netCDF4/utils.py
+
+    Parameters
+    ----------
+    ifile : Dataset
+        Instance of the Dataset class from the netCDF4 library.
 
     '''
 
@@ -154,20 +202,23 @@ class ncfile(object):
             #setattr(ncfile4, gatt, getattr(self.ifile,gatt))
         self.gattrs = gattrs
         
-    def add_dim(self, name, size, isunlimited=False):
-        '''
-        Add dimention to the list of dimentions already copied from the file.
-        '''
-        self.dims[name] = OrderedDict()
-        self.dims[name]['name'] = name
-        self.dims[name]['size'] = size
-        self.dims[name]['isunlimited'] = isunlimited
+
 
     def rename_dim(self, oldname, newname, renameall = True):
-        '''
-        Rename dimention. If renameall is True, rename coresponding
-        dimntions in the variables as well.
-        '''
+        """Rename existing dimention.
+
+        Parameters
+        ----------
+        oldname : str
+            Name of existing dimention.
+        newname : str
+            New name for the dimention.
+        renameall : bool
+            If renameall is True, rename coresponding
+            dimntions in the variables as well.
+
+        """
+
         newdim = OrderedDict((newname if k == oldname else k, v) for k, v in
                              self.dims.viewitems())
         newdim[newname]['name'] = newname
@@ -177,9 +228,18 @@ class ncfile(object):
                 self.rename_dim_invar(var, oldname, newname)
 
     def rename_dim_invar(self, var, oldname, newname):
-        '''
-        Rename dimention in the variable.
-        '''
+        """Rename dimention in the variable.
+
+        Parameters
+        ----------
+        var : str
+            Variable, that should have dimention with `oldname`.
+        oldname : str
+            Old name of the dimention.
+        newname : str
+            New name of the dimention.
+
+        """
         vardims = self.variab[var]['dimentions']
         if oldname in vardims:
                     #print 'find old name'
@@ -191,104 +251,231 @@ class ncfile(object):
             self.variab[var]['dimentions'] = tuple(tempdim)
 
     def rename_attr(self, var, oldname, newname):
-        '''
-        Renames the attribute, but the value of the attribute stays the same.
-        '''
+        """Rename existing attribute of the variable.
+
+        The value of the attribute stays the same.
+
+        Parameters
+        ----------
+        var : str
+            Variable, that should have an attribute with `oldname`.
+        oldname : str
+            Old name of the attribute.
+        newname : str
+            New name of the attribute.
+
+        """
+
         newattr = OrderedDict((newname if k == oldname else k, v) for k, v in
                              self.variab[var]['attributes'].viewitems())
         self.variab[var]['attributes'] = newattr
 
     def rename_gattr(self, oldname, newname):
-        '''
-        Renames the global attribute, but the value of the attribute stays the same.
-        '''
+        """Rename existing global attribute.
+
+        The value of the attribute stays the same.
+
+        Parameters
+        ----------
+        oldname : str
+            Old name of the global attribute.
+        newname : str
+            New name of the global attribute.
+
+        """
+
         newattr = OrderedDict((newname if k == oldname else k, v) for k, v in
                              self.gattrs.viewitems())
         self.gattrs = newattr
 
     def change_attr(self, var, attrname, newvalue):
-        '''
-        Change the value of the attribute in specified variable
+        '''Change the value of the attribute in specified variable.
+
+        The name of the attribute stays the same.
+
+        Parameters
+        ----------
+        var : str
+            Variable, that should have an attribute with `attrname`.
+        attrname : str
+            Name of the attribute.
+        newvalue : str
+            New value of the attribute.
         '''
         if self.variab[var]['attributes'].has_key(attrname):
             self.variab[var]['attributes'][attrname] = newvalue
         else:
             raise ValueError('there is no attribute with name {} in variable {}'.format(attrname, var))
+
     def change_gattr(self, attrname, newvalue):
-        '''
-        Change the value of the global attribute in specified variable
+        '''Change the value of existing global attribute.
+
+        The name of the global attribute stays the same.
+
+        Parameters
+        ----------
+        attrname : str
+            Name of the global attribute.
+        newvalue : str
+            New value of the global attribute.
         '''
         if self.gattrs.has_key(attrname):
             self.gattrs[attrname] = newvalue
         else:
             raise ValueError('there is no global attribute with name {}'.format(attrname))
+    
+    def change_data(self, var, data):
+        '''Change data values in the existing variable.
 
+        Should be exactly the same shape as original data. 
+        Data should be numpy array, or array-like object.
+
+        Parameters
+        ----------
+        var : str
+            Name of the variable.
+        data : array-like
+            Array with new data values of the variable. 
+            The size should be the same as for the original data.
+        '''
+        self.variab[var]['data'] = data
 
     def rename_var(self, oldname, newname):
-        '''
-        Rename variable.
-        '''
+        """Rename existing variable.
+
+        Attributes, dimentions and data stays the same.
+
+        Parameters
+        ----------
+        oldname : str
+            Old name of the variable.
+        newname : str
+            New name of the variable.
+
+        """
         if self.variab.has_key(oldname):
             newvar = OrderedDict((newname if k == oldname else k, v) for k, v in
                              self.variab.viewitems())
             self.variab = newvar
         else:
             raise ValueError('there is no variable with name {}'.format(oldname))
+    
+    def add_dim(self, name, size, isunlimited=False):
+        """Add dimention.
 
+        Parameters
+        ----------
+        name : str
+            Name of the dimention.
+        size : int
+            Size of the dimention.
+        isunlimited : bool
+            Flag to indicate if the dimention is unlimited or not.
+
+        """
+    
+        self.dims[name] = OrderedDict()
+        self.dims[name]['name'] = name
+        self.dims[name]['size'] = size
+        self.dims[name]['isunlimited'] = isunlimited
+    
     def add_attr(self, var, attr, value):
-        '''
-        Adds attribute to specified variable
-        '''
+        """Add attribute to the variable.
+
+        Parameters
+        ----------
+        var : str
+            Name of the variable.
+        attr : str
+            Name of the new attribute.
+        value : str
+            Value of the new attribute.
+
+        """
+ 
         self.variab[var]['attributes'][attr] = value
 
     def add_gattr(self, attr, value):
-        '''
-        Adds global attribute to specified variable
-        '''
+        """Add global attribute.
+
+        Parameters
+        ----------
+        attr : str
+            Name of the new global attribute.
+        value : str
+            Value of the new global attribute.
+
+        """
         self.gattrs[attr] = value
 
-    def dell_attr(self, var, attr):
-        '''
-        Delete attribute from the variable
-        '''
+    def add_var(self, varname, var):
+        """Add variable.
+
+        Parameters
+        ----------
+        varname : str
+            Name of the new variable.
+        var : OrderedDict
+            Should be OrderedDict, prepared with `create_variable` function.
+            
+        """
+        self.variab[varname] = var
+
+    def del_attr(self, var, attr):
+        """Delete attribute from the variable.
+
+        Parameters
+        ----------
+        var : str
+            Name of the variable.
+        attr : str
+            Name of the attribute to delete.
+
+        """
         if self.variab[var]['attributes'].has_key(attr):
             del self.variab[var]['attributes'][attr]
         else:
             raise ValueError('there is no attribute with name {} in variable {} '.format(attr, var))
 
-    def add_var(self, varname, var):
-        '''
-        Adds variable to the netCDF file (should be OrderedDict, prepared with 'create_variable' function).
-        '''
-        self.variab[varname] = var
+
 
     def reorder_dims(self, neworder):
-        '''
-        Reorder dimentions in the OrderedDict.
-        '''
+        """Reorder dimentions.
+
+        Parameters
+        ----------
+        neworder : list
+            List with dimention names, positioned in the desired order.
+
+        """
+
         ordered = reorder(self.dims, neworder)
         self.dims = ordered
 
     def reorder_vars(self, neworder):
-        '''
-        Reorder variables.
-        '''
+        """Reorder variables.
+
+        Parameters
+        ----------
+        neworder : list
+            List with name of the variables, positioned in the desired order.
+
+        """
         ordered = reorder(self.variab, neworder)
         self.variab = ordered
 
-    def change_data(self, var, data):
-        '''
-        Change data values in the variable. Should be exactly the same shape as original data.
-        Data should be numpy array, or object that can return numpy array with []
-        syntax
-        '''
-        self.variab[var]['data'] = data
-
-
 
     def save(self, fname):
-        '''
-        Create netCDF file from the ncfile object 
+        '''Save the file to the disk.
+
+        Create netCDF file from the ncfile object.
+
+        Parameters
+        ----------
+        fname : str
+            File name.
+
+         
         '''
 
         try:
