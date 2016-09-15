@@ -1,7 +1,7 @@
 # fixnc
 Easy edit of netCDF files.
 
-[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/hyperium/hyper/master/LICENSE) [![Documentation Status](https://readthedocs.org/projects/fixnc/badge/?version=latest)](http://fixnc.readthedocs.io/en/latest/?badge=latest) [![Build Status](https://travis-ci.org/koldunovn/fixnc.svg?branch=master)](https://travis-ci.org/koldunovn/fixnc) 
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/koldunovn/fixnc/blob/master/License.txt) [![Documentation Status](https://readthedocs.org/projects/fixnc/badge/?version=latest)](http://fixnc.readthedocs.io/en/latest/?badge=latest) [![Build Status](https://travis-ci.org/koldunovn/fixnc.svg?branch=master)](https://travis-ci.org/koldunovn/fixnc) 
 
 
 
