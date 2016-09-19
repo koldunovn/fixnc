@@ -498,16 +498,9 @@ class ncfile(object):
         # Loop over variables
         for vari in self.variab:
             #print vari
+            perem  = self.variab[vari]
 
-            if perem['datatype'] != np.dtype('|S1'):
-                var = ncfile4.createVariable(vari,
-                                         perem['datatype'],
-                                         perem['dimentions'], \
-                                        
-                                         complevel=1)
-            else:
-
-                var = ncfile4.createVariable(vari,
+            var = ncfile4.createVariable(vari,
                                          perem['datatype'],
                                          perem['dimentions'], \
                                          fill_value=perem['FillValue'],\
