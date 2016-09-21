@@ -21,17 +21,17 @@ def test_rename_dim():
     nc.rename_dim('X','lon')
     nc.rename_dim('T','time',)
     assert nc.dims.keys() == ['lon', u'Y', u'time']
-    assert nc.variab['mytemp']['dimentions'] == (u'time', 'lon', u'Y')
+    assert nc.variab['mytemp']['dimensions'] == (u'time', 'lon', u'Y')
     #return nc
 
 def test_rename_dim2():
     nc.rename_dim('Y','lat',  renameall=False)
     assert nc.dims.keys() == ['lon', u'lat', u'time']
-    assert nc.variab['mytemp']['dimentions'] == (u'time', 'lon', u'Y')
+    assert nc.variab['mytemp']['dimensions'] == (u'time', 'lon', u'Y')
 
 def test_rename_dim_invar():
     nc.rename_dim_invar('mytemp','Y','lat')
-    assert nc.variab['mytemp']['dimentions'] == (u'time', 'lon', u'lat')
+    assert nc.variab['mytemp']['dimensions'] == (u'time', 'lon', u'lat')
 
 def test_rename_var():
 

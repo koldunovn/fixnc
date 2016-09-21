@@ -6,24 +6,24 @@ import sh
 from collections import OrderedDict
 import pickle
 
-def create_variable(data, dimentions, hasunlimdim=False, datatype='float32', FillValue=None,
+def create_variable(data, dimensions, hasunlimdim=False, datatype='float32', FillValue=None,
                     attributes=OrderedDict()):
     '''Creates dictionary that can be added as a variable to the netCDF file.
 
-    Create  dictionary that contains information nessesary for creation of the
+    Create  dictionary that contains information necessary for creation of the
     netCDF variable.
 
     Parameters
     ----------
     data : array-like
         Numpy array, array-like object that contains the actual data values.
-    dimentions : tuple
-        tuple with dimention names, like ('time', 'lat', 'lon').
-        Dimentions should exist in the source file, or should be added
+    dimensions : tuple
+        tuple with dimension names, like ('time', 'lat', 'lon').
+        dimensions should exist in the source file, or should be added
         in the ncfile object.
     hasunlimdim : bool
-         True if variable have unlimited dimention, otherwise False.
-         !!NOTE!! At present unlimited dimention in your new variable has
+         True if variable have unlimited dimension, otherwise False.
+         !!NOTE!! At present unlimited dimension in your new variable has
          to be the same size as in the original data (e.g. number of time steps).
          This should be changed.
     datatype: datatype
@@ -39,7 +39,7 @@ def create_variable(data, dimentions, hasunlimdim=False, datatype='float32', Fil
         Ordered dictionary that can be used to add data to netCDF file.
     '''
     vvar = OrderedDict([('data',data),
-                        ('dimentions',dimentions),
+                        ('dimensions',dimensions),
                         ('hasunlimdim',hasunlimdim),
                         ('datatype',np.dtype(datatype)),
                         ('FillValue',FillValue),
@@ -77,7 +77,7 @@ def load_variable(filename):
     Returns
     -------
     OrderedDict
-        
+
     '''
     ifile = open(filename, 'r')
     var = pickle.load(ifile)
@@ -103,7 +103,7 @@ def reorder(odict, neworder):
         Ordered dictionary with key-value pairs reordered according to the `neworder`.
     '''
     if len(odict) != len(neworder):
-        raise ValueError('Number of elemnts in the dictionary and in the new order have to be equal')
+        raise ValueError('Number of elements in the dictionary and in the new order have to be equal')
     for key in neworder:
         if key not in odict:
             raise ValueError('Key {} from neworder is not in the dictionary'.format(key))
@@ -120,7 +120,7 @@ class ncfile(object):
     created by Dataset from the netCDF4 package. The properties of the file
     are copied to the attributes of the class and cna be then saved together
     with data of the original file. The purpose is to be able to fix
-    metadata in the netCDF file, like dimention names, attributes and so on,
+    metadata in the netCDF file, like dimension names, attributes and so on,
     but to save the rest of the structure of the original file as much as
     possible.
 
@@ -143,7 +143,7 @@ class ncfile(object):
         self.istart = 0
         self.istop = -1
 
-        # Read dimentions
+        # Read dimensions
         dims = OrderedDict()
         for dimname, dim in ifile.dimensions.items():
             dims[dimname] = OrderedDict()
@@ -173,10 +173,10 @@ class ncfile(object):
             variab[varname] = OrderedDict()
             ncvar = ifile.variables[varname]
             variab[varname]['data'] = ncvar
-            variab[varname]['dimentions']= ncvar.dimensions
+            variab[varname]['dimensions']= ncvar.dimensions
             hasunlimdim = False
-            # Check if dimention is unlimited
-            for vdim in variab[varname]['dimentions']:
+            # Check if dimension is unlimited
+            for vdim in variab[varname]['dimensions']:
                 if ifile.dimensions[vdim].isunlimited():
                     hasunlimdim = True
                     variab[varname]['unlimdimname'] = vdim
@@ -196,27 +196,27 @@ class ncfile(object):
 
         #Set global attributes
         gattrs_names = self.ifile.ncattrs()
-        
+
         gattrs = OrderedDict()
         for gatt in gattrs_names:
             gattrs[gatt] = getattr(self.ifile,gatt)
             #setattr(ncfile4, gatt, getattr(self.ifile,gatt))
         self.gattrs = gattrs
-        
+
 
 
     def rename_dim(self, oldname, newname, renameall = True):
-        """Rename existing dimention.
+        """Rename existing dimension.
 
         Parameters
         ----------
         oldname : str
-            Name of existing dimention.
+            Name of existing dimension.
         newname : str
-            New name for the dimention.
+            New name for the dimension.
         renameall : bool
-            If renameall is True, rename coresponding
-            dimntions in the variables as well.
+            If renameall is True, rename corresponding
+            dimensions in the variables as well.
 
         """
 
@@ -229,27 +229,27 @@ class ncfile(object):
                 self.rename_dim_invar(var, oldname, newname)
 
     def rename_dim_invar(self, var, oldname, newname):
-        """Rename dimention in the variable.
+        """Rename dimension in the variable.
 
         Parameters
         ----------
         var : str
-            Variable, that should have dimention with `oldname`.
+            Variable, that should have dimension with `oldname`.
         oldname : str
-            Old name of the dimention.
+            Old name of the dimension.
         newname : str
-            New name of the dimention.
+            New name of the dimension.
 
         """
-        vardims = self.variab[var]['dimentions']
+        vardims = self.variab[var]['dimensions']
         if oldname in vardims:
                     #print 'find old name'
             tempdim = list(vardims)
             for i in range(len(tempdim)):
                 if tempdim[i] == oldname:
                     tempdim[i] = newname
-            
-            self.variab[var]['dimentions'] = tuple(tempdim)
+
+            self.variab[var]['dimensions'] = tuple(tempdim)
 
     def rename_attr(self, var, oldname, newname):
         """Rename existing attribute of the variable.
@@ -324,11 +324,11 @@ class ncfile(object):
             self.gattrs[attrname] = newvalue
         else:
             raise ValueError('there is no global attribute with name {}'.format(attrname))
-    
+
     def change_data(self, var, data):
         '''Change data values in the existing variable.
 
-        Should be exactly the same shape as original data. 
+        Should be exactly the same shape as original data.
         Data should be numpy array, or array-like object.
 
         Parameters
@@ -336,7 +336,7 @@ class ncfile(object):
         var : str
             Name of the variable.
         data : array-like
-            Array with new data values of the variable. 
+            Array with new data values of the variable.
             The size should be the same as for the original data.
         '''
         self.variab[var]['data'] = data
@@ -344,7 +344,7 @@ class ncfile(object):
     def rename_var(self, oldname, newname):
         """Rename existing variable.
 
-        Attributes, dimentions and data stays the same.
+        Attributes, dimensions and data stays the same.
 
         Parameters
         ----------
@@ -360,26 +360,26 @@ class ncfile(object):
             self.variab = newvar
         else:
             raise ValueError('there is no variable with name {}'.format(oldname))
-    
+
     def add_dim(self, name, size, isunlimited=False):
-        """Add dimention.
+        """Add dimension.
 
         Parameters
         ----------
         name : str
-            Name of the dimention.
+            Name of the dimension.
         size : int
-            Size of the dimention.
+            Size of the dimension.
         isunlimited : bool
-            Flag to indicate if the dimention is unlimited or not.
+            Flag to indicate if the dimension is unlimited or not.
 
         """
-    
+
         self.dims[name] = OrderedDict()
         self.dims[name]['name'] = name
         self.dims[name]['size'] = size
         self.dims[name]['isunlimited'] = isunlimited
-    
+
     def add_attr(self, var, attr, value):
         """Add attribute to the variable.
 
@@ -393,7 +393,7 @@ class ncfile(object):
             Value of the new attribute.
 
         """
- 
+
         self.variab[var]['attributes'][attr] = value
 
     def add_gattr(self, attr, value):
@@ -418,7 +418,7 @@ class ncfile(object):
             Name of the new variable.
         var : OrderedDict
             Should be OrderedDict, prepared with `create_variable` function.
-            
+
         """
         self.variab[varname] = var
 
@@ -441,12 +441,12 @@ class ncfile(object):
 
 
     def reorder_dims(self, neworder):
-        """Reorder dimentions.
+        """Reorder dimensions.
 
         Parameters
         ----------
         neworder : list
-            List with dimention names, positioned in the desired order.
+            List with dimension names, positioned in the desired order.
 
         """
 
@@ -476,7 +476,7 @@ class ncfile(object):
         fname : str
             File name.
 
-         
+
         '''
 
         try:
@@ -486,7 +486,7 @@ class ncfile(object):
 
         ncfile4 = Dataset(fname,'w',clobber=False,format='NETCDF4_CLASSIC')
 
-        # Create dimentions
+        # Create dimensions
         for dim in self.dims.itervalues():
             #print(dim)
             if dim["isunlimited"]:
@@ -502,17 +502,17 @@ class ncfile(object):
 
             var = ncfile4.createVariable(vari,
                                          perem['datatype'],
-                                         perem['dimentions'], \
+                                         perem['dimensions'], \
                                          fill_value=perem['FillValue'],\
                                          complevel=1)
 
             #attdict = perem['data'].__dict__
             #if '_FillValue' in attdict: del attdict['_FillValue']
             var.setncatts(perem['attributes'])
-            
+
             # Zero size string variables are loaded as masked constants by netCDF4 (e.g. rotated_pole)
             # this workaround seems to solve the problem with not beeing able to
-            # save this masked constant to netCDF4 variables 
+            # save this masked constant to netCDF4 variables
             # Error "Cannot set fill value of string with array of dtype "float64".
             if perem['datatype'].char in 'SU':
                 if type(perem['data'][:]) == np.ma.core.MaskedConstant :
@@ -556,14 +556,14 @@ class ncfile(object):
         sinfo = []
         sinfo.append('File format: '+ self.ifile.file_format)
         sdims = [name+'('+str(self.dims[name]['size'])+')' for name in self.dims ]
-        sinfo.append('Dimentions: '+', '.join(sdims))
+        sinfo.append('dimensions: '+', '.join(sdims))
 
         svars = ['variables:\n']
         for key in self.variab:
             #print "\t {} {}".format(self.variab[key]['datatype'], key)
             svars.append("\t {} {}({})\n".format(self.variab[key]['datatype'],\
                                                key, \
-                                               ', '.join(self.variab[key]['dimentions'])))
+                                               ', '.join(self.variab[key]['dimensions'])))
             for attr in self.variab[key]['attributes'].items():
                 svars.append("\t   {}: {}\n".format(attr[0], attr[1]))
             if self.variab[key]['FillValue']:
