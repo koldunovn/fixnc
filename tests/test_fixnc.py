@@ -62,6 +62,10 @@ def test_add_var():
     nc.add_var('newvar', newvar)
     assert nc.variab.keys() == ['time', 'temp', 'newvar']
 
+def test_change_dtype():
+    nc.change_dtype('newvar', np.dtype('int16'))
+    assert nc.variab['newvar']['datatype'] == np.dtype('int16')
+
 def test_save():
     try:
         os.remove('./tests/out.nc')

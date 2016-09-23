@@ -13,7 +13,7 @@ def create_variable(data, dimensions, hasunlimdim=False, datatype='float32', Fil
     Create  dictionary that contains information necessary for creation of the
     netCDF variable.
 
-    Parameters
+    Parameters  
     ----------
     data : array-like
         Numpy array, array-like object that contains the actual data values.
@@ -340,6 +340,22 @@ class ncfile(object):
             The size should be the same as for the original data.
         '''
         self.variab[var]['data'] = data
+
+    def change_dtype(self, var, dtype):
+        '''Change data type values in the existing variable.
+
+        Should be exactly the same shape as original data.
+        Data should be numpy array, or array-like object.
+
+        Parameters
+        ----------
+        var : str
+            Name of the variable.
+        dtype : numpy dtype, e.g. npumpy.dtype('float16')
+            Array with new data values of the variable.
+            The size should be the same as for the original data.
+        '''
+        self.variab[var]['datatype'] = dtype
 
     def rename_var(self, oldname, newname):
         """Rename existing variable.
