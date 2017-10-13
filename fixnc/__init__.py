@@ -6,6 +6,11 @@ import sh
 from collections import OrderedDict
 import pickle
 
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
+
+
 def create_variable(data, dimensions, hasunlimdim=False, datatype='float32', FillValue=None,
                     attributes=OrderedDict()):
     '''Creates dictionary that can be added as a variable to the netCDF file.
@@ -588,9 +593,11 @@ class ncfile(object):
         sinfo.append(svars)
         sgattr = []
         for attr in self.gattrs:
-            sgattr.append('\t {}:{}\n'.format(attr, self.gattrs[attr]))
+            print(attr)
+            sgattr.append('\t {}:{}\n'.format(attr , self.gattrs[attr]))
         sgattr = ''.join(sgattr)
         sinfo.append(sgattr)
+        print(sinfo)
         return '\n'.join(sinfo)
 
 
