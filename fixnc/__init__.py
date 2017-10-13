@@ -459,6 +459,19 @@ class ncfile(object):
         else:
             raise ValueError('there is no attribute with name {} in variable {} '.format(attr, var))
 
+    def del_var(self, var):
+        """Delete variable.
+
+        Parameters
+        ----------
+        var : str
+            Name of the variable.
+        
+        """
+        if self.variab[var]:
+            del self.variab[var]
+        else:
+            raise ValueError('there is no variable with name {} '.format(var))
 
 
     def reorder_dims(self, neworder):
