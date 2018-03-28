@@ -7,8 +7,11 @@ from collections import OrderedDict
 import pickle
 
 import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
+try:
+    reload(sys)
+    sys.setdefaultencoding('utf8')
+except:
+    pass
 
 
 def create_variable(data, dimensions, hasunlimdim=False, datatype='float32', FillValue=None,
