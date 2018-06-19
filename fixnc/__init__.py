@@ -229,7 +229,7 @@ class ncfile(object):
         """
 
         newdim = OrderedDict((newname if k == oldname else k, v) for k, v in
-                             self.dims.viewitems())
+                             self.dims.items())
         newdim[newname]['name'] = newname
         self.dims = newdim
         if renameall:
@@ -276,7 +276,7 @@ class ncfile(object):
         """
 
         newattr = OrderedDict((newname if k == oldname else k, v) for k, v in
-                             self.variab[var]['attributes'].viewitems())
+                             self.variab[var]['attributes'].items())
         self.variab[var]['attributes'] = newattr
 
     def rename_gattr(self, oldname, newname):
@@ -294,7 +294,7 @@ class ncfile(object):
         """
 
         newattr = OrderedDict((newname if k == oldname else k, v) for k, v in
-                             self.gattrs.viewitems())
+                             self.gattrs.items())
         self.gattrs = newattr
 
     def change_attr(self, var, attrname, newvalue):
@@ -311,7 +311,7 @@ class ncfile(object):
         newvalue : str
             New value of the attribute.
         '''
-        if self.variab[var]['attributes'].has_key(attrname):
+        if attrname in self.variab[var]['attributes']:
             self.variab[var]['attributes'][attrname] = newvalue
         else:
             raise ValueError('there is no attribute with name {} in variable {}'.format(attrname, var))
@@ -328,7 +328,7 @@ class ncfile(object):
         newvalue : str
             New value of the global attribute.
         '''
-        if self.gattrs.has_key(attrname):
+        if attrname in self.gattrs:
             self.gattrs[attrname] = newvalue
         else:
             raise ValueError('there is no global attribute with name {}'.format(attrname))
@@ -378,9 +378,9 @@ class ncfile(object):
             New name of the variable.
 
         """
-        if self.variab.has_key(oldname):
+        if oldname in self.variab:
             newvar = OrderedDict((newname if k == oldname else k, v) for k, v in
-                             self.variab.viewitems())
+                             self.variab.items())
             self.variab = newvar
         else:
             raise ValueError('there is no variable with name {}'.format(oldname))
@@ -457,7 +457,7 @@ class ncfile(object):
             Name of the attribute to delete.
 
         """
-        if self.variab[var]['attributes'].has_key(attr):
+        if attr in self.variab[var]['attributes']:
             del self.variab[var]['attributes'][attr]
         else:
             raise ValueError('there is no attribute with name {} in variable {} '.format(attr, var))
@@ -524,7 +524,7 @@ class ncfile(object):
         ncfile4 = Dataset(fname,'w',clobber=False,format='NETCDF4_CLASSIC')
 
         # Create dimensions
-        for dim in self.dims.itervalues():
+        for dim in self.dims.values():
             #print(dim)
             if dim["isunlimited"]:
                 ncfile4.createDimension(dim['name'],None)
