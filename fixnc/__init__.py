@@ -149,6 +149,7 @@ class ncfile(object):
         self.nchunk = 10
         self.istart = 0
         self.istop = -1
+        self.file_format = ifile.file_format
 
         # Read dimensions
         dims = OrderedDict()
@@ -515,7 +516,7 @@ class ncfile(object):
 
         '''
 
-        ncfile4 = Dataset(fname,'w',clobber=clobber,format='NETCDF4_CLASSIC')
+        ncfile4 = Dataset(fname,'w',clobber=clobber,format=self.file_format)
 
         # Create dimensions
         for dim in self.dims.values():
