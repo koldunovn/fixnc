@@ -209,6 +209,11 @@ class ncfile(object):
             except:
                 variab[varname]['complevel'] = 1
 
+            if isinstance(ncvar.chunking(), list):
+                variab[varname]['chunksizes'] = ncvar.chunking()
+            else:
+                variab[varname]['chunksizes'] = None
+
         self.variab = variab
 
         #Set global attributes
@@ -545,6 +550,7 @@ class ncfile(object):
                                          perem['datatype'],
                                          perem['dimensions'],
                                          fill_value=perem['FillValue'],
+                                         chunksizes=perem['chunksizes'],
                                          zlib=perem['zlib'],
                                          complevel=perem['complevel'])
 
