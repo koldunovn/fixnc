@@ -200,6 +200,15 @@ class ncfile(object):
             if '_FillValue' in attdict: del attdict['_FillValue']
             variab[varname]['attributes'] = attdict
 
+            try:
+                variab[varname]['zlib'] = ncvar.filters()['zlib']
+            except:
+                variab[varname]['zlib'] = False
+            try:
+                variab[varname]['complevel'] = ncvar.filters()['complevel']
+            except:
+                variab[varname]['complevel'] = 1
+
         self.variab = variab
 
         #Set global attributes
@@ -534,9 +543,10 @@ class ncfile(object):
 
             var = ncfile4.createVariable(vari,
                                          perem['datatype'],
-                                         perem['dimensions'], \
-                                         fill_value=perem['FillValue'],\
-                                         complevel=1)
+                                         perem['dimensions'],
+                                         fill_value=perem['FillValue'],
+                                         zlib=perem['zlib'],
+                                         complevel=perem['complevel'])
 
             #attdict = perem['data'].__dict__
             #if '_FillValue' in attdict: del attdict['_FillValue']
