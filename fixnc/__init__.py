@@ -2,7 +2,6 @@ import numpy as np
 from netCDF4 import Dataset
 from netCDF4 import stringtoarr
 
-import sh
 from collections import OrderedDict
 import pickle
 
@@ -503,7 +502,7 @@ class ncfile(object):
         self.variab = ordered
 
 
-    def save(self, fname):
+    def save(self, fname, clobber=False):
         '''Save the file to the disk.
 
         Create netCDF file from the ncfile object.
@@ -516,12 +515,7 @@ class ncfile(object):
 
         '''
 
-        try:
-            sh.rm(fname)
-        except:
-            pass
-
-        ncfile4 = Dataset(fname,'w',clobber=False,format='NETCDF4_CLASSIC')
+        ncfile4 = Dataset(fname,'w',clobber=clobber,format='NETCDF4_CLASSIC')
 
         # Create dimensions
         for dim in self.dims.values():
