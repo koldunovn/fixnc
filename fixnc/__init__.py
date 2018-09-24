@@ -14,7 +14,8 @@ except:
 
 
 def create_variable(data, dimensions, hasunlimdim=False, datatype='float32', FillValue=None,
-                    attributes=OrderedDict()):
+                    attributes=OrderedDict(),
+                    zlib=False, complevel=None, chunksizes=None):
     '''Creates dictionary that can be added as a variable to the netCDF file.
 
     Create  dictionary that contains information necessary for creation of the
@@ -39,18 +40,29 @@ def create_variable(data, dimensions, hasunlimdim=False, datatype='float32', Fil
         If your data should have one, otherwise None
     attributes: OrderedDict
         Orderd dictionary with attributes and their values.
+    zlib:
+        Whether zlib should be used to compres variable data
+    complevel:
+        Compression level for zlib (1-9)
+    chunksizes:
+        HDF5 chunksizes for each dimension fo the variable
 
     Returns
     -------
     OrderedDict
         Ordered dictionary that can be used to add data to netCDF file.
     '''
+
     vvar = OrderedDict([('data',data),
                         ('dimensions',dimensions),
                         ('hasunlimdim',hasunlimdim),
                         ('datatype',np.dtype(datatype)),
                         ('FillValue',FillValue),
-                        ('attributes',attributes)])
+                        ('attributes',attributes),
+                        ('zlib', zlib),
+                        ('complevel', complevel),
+                        ('chunksizes', chunksizes)])
+
     return vvar
 
 def dump_variable(var, filename):
@@ -207,7 +219,7 @@ class ncfile(object):
             try:
                 variab[varname]['complevel'] = ncvar.filters()['complevel']
             except:
-                variab[varname]['complevel'] = 1
+                variab[varname]['complevel'] = None
 
             if isinstance(ncvar.chunking(), list):
                 variab[varname]['chunksizes'] = ncvar.chunking()
@@ -543,16 +555,19 @@ class ncfile(object):
 
         # Loop over variables
         for vari in self.variab:
-            #print vari
             perem  = self.variab[vari]
+
+            args = {key: val for key, val in
+                        (('fill_value', perem['FillValue']),
+                         ('chunksizes', perem['chunksizes']),
+                         ('zlib', perem['zlib']),
+                         ('complevel', perem['complevel']),)
+                        if val is not None}
 
             var = ncfile4.createVariable(vari,
                                          perem['datatype'],
                                          perem['dimensions'],
-                                         fill_value=perem['FillValue'],
-                                         chunksizes=perem['chunksizes'],
-                                         zlib=perem['zlib'],
-                                         complevel=perem['complevel'])
+                                         **args)
 
             #attdict = perem['data'].__dict__
             #if '_FillValue' in attdict: del attdict['_FillValue']
