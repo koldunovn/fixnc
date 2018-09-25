@@ -561,7 +561,7 @@ class ncfile(object):
                         (('fill_value', perem['FillValue']),
                          ('chunksizes', perem['chunksizes']),
                          ('zlib', perem['zlib']),
-                         ('complevel', perem['complevel']),)
+                         ('complevel', perem['complevel']))
                         if val is not None}
 
             var = ncfile4.createVariable(vari,
