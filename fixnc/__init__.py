@@ -2,7 +2,6 @@ import numpy as np
 from netCDF4 import Dataset
 from netCDF4 import stringtoarr
 
-import sh
 from collections import OrderedDict
 import pickle
 
@@ -15,7 +14,8 @@ except:
 
 
 def create_variable(data, dimensions, hasunlimdim=False, datatype='float32', FillValue=None,
-                    attributes=OrderedDict()):
+                    attributes=OrderedDict(),
+                    zlib=False, complevel=None, chunksizes=None):
     '''Creates dictionary that can be added as a variable to the netCDF file.
 
     Create  dictionary that contains information necessary for creation of the
@@ -40,18 +40,29 @@ def create_variable(data, dimensions, hasunlimdim=False, datatype='float32', Fil
         If your data should have one, otherwise None
     attributes: OrderedDict
         Orderd dictionary with attributes and their values.
+    zlib:
+        Whether zlib should be used to compres variable data
+    complevel:
+        Compression level for zlib (1-9)
+    chunksizes:
+        HDF5 chunksizes for each dimension fo the variable
 
     Returns
     -------
     OrderedDict
         Ordered dictionary that can be used to add data to netCDF file.
     '''
+
     vvar = OrderedDict([('data',data),
                         ('dimensions',dimensions),
                         ('hasunlimdim',hasunlimdim),
                         ('datatype',np.dtype(datatype)),
                         ('FillValue',FillValue),
-                        ('attributes',attributes)])
+                        ('attributes',attributes),
+                        ('zlib', zlib),
+                        ('complevel', complevel),
+                        ('chunksizes', chunksizes)])
+
     return vvar
 
 def dump_variable(var, filename):
@@ -150,6 +161,7 @@ class ncfile(object):
         self.nchunk = 10
         self.istart = 0
         self.istop = -1
+        self.file_format = ifile.file_format
 
         # Read dimensions
         dims = OrderedDict()
@@ -199,6 +211,20 @@ class ncfile(object):
             attdict = ncvar.__dict__
             if '_FillValue' in attdict: del attdict['_FillValue']
             variab[varname]['attributes'] = attdict
+
+            try:
+                variab[varname]['zlib'] = ncvar.filters()['zlib']
+            except:
+                variab[varname]['zlib'] = False
+            try:
+                variab[varname]['complevel'] = ncvar.filters()['complevel']
+            except:
+                variab[varname]['complevel'] = None
+
+            if isinstance(ncvar.chunking(), list):
+                variab[varname]['chunksizes'] = ncvar.chunking()
+            else:
+                variab[varname]['chunksizes'] = None
 
         self.variab = variab
 
@@ -503,7 +529,7 @@ class ncfile(object):
         self.variab = ordered
 
 
-    def save(self, fname):
+    def save(self, fname, clobber=False):
         '''Save the file to the disk.
 
         Create netCDF file from the ncfile object.
@@ -516,12 +542,7 @@ class ncfile(object):
 
         '''
 
-        try:
-            sh.rm(fname)
-        except:
-            pass
-
-        ncfile4 = Dataset(fname,'w',clobber=False,format='NETCDF4_CLASSIC')
+        ncfile4 = Dataset(fname,'w',clobber=clobber,format=self.file_format)
 
         # Create dimensions
         for dim in self.dims.values():
@@ -534,14 +555,19 @@ class ncfile(object):
 
         # Loop over variables
         for vari in self.variab:
-            #print vari
             perem  = self.variab[vari]
+
+            args = {key: val for key, val in
+                        (('fill_value', perem['FillValue']),
+                         ('chunksizes', perem['chunksizes']),
+                         ('zlib', perem['zlib']),
+                         ('complevel', perem['complevel']))
+                        if val is not None}
 
             var = ncfile4.createVariable(vari,
                                          perem['datatype'],
-                                         perem['dimensions'], \
-                                         fill_value=perem['FillValue'],\
-                                         complevel=1)
+                                         perem['dimensions'],
+                                         **args)
 
             #attdict = perem['data'].__dict__
             #if '_FillValue' in attdict: del attdict['_FillValue']
