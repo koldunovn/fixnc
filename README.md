@@ -23,6 +23,8 @@ Many people and programs still do not follow CF convention. What is worst many p
 
 - netCDF4 https://github.com/Unidata/netcdf4-python
 
+- sh https://github.com/amoffat/sh
+
 ## Basic usage:
 
 Let't open some netCDF file with netCDF4:
