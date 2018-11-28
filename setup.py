@@ -20,7 +20,7 @@ CLASSIFIERS = [
     'Topic :: Scientific/Engineering',
 ]
 
-INSTALL_REQUIRES = ['netcdf4 >= 1.1.8']
+INSTALL_REQUIRES = ['netcdf4 >= 1.1.8', 'sh >= 1.11']
 TESTS_REQUIRE = ['pytest >= 2.7.1']
 
 DESCRIPTION = "Easy edit of netCDF files."
